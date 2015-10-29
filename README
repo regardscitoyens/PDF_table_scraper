@@ -10,6 +10,7 @@ manual checking is required over the results.
 It currently exports the data as a .html (for visualization) as well as in
 Python pickle form, for reuse in another script.
 
+    ~/pdf_table_scraper$ ./pdf_table_scraper.py -h
     usage: pdf_table_scraper.py [-h] [--vskip VSKIP] [--page PAGE] [--html HTML]
                                 [--pickle PICKLE] [-v]
                                 filename
