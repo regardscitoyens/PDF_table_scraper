@@ -1,0 +1,29 @@
+PDF table scraper
+-----------------
+
+This script attempts to extract the data of a table from a pdf file.
+
+It considers every single page of a pdf as a table, and attempts to make sense
+of it. The output should be much easier to parse and 'somehow clean', but a
+manual checking is required over the results.
+
+It currently exports the data as a .html (for visualization) as well as in
+Python pickle form, for reuse in another script.
+
+    usage: pdf_table_scraper.py [-h] [--vskip VSKIP] [--page PAGE] [--html HTML]
+                                [--pickle PICKLE] [-v]
+                                filename
+
+    Extracts a table from a .pdf file
+
+    positional arguments:
+      filename         the .pdf file
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      --vskip VSKIP    max vertical space between consecutive lines in the same
+                       paragraph (usually ~8)
+      --page PAGE      run the script on a specific page
+      --html HTML      A filename for html output
+      --pickle PICKLE  A filename for Python .pickle output
+      -v               Increase the verbosity level
