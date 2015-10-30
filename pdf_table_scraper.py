@@ -17,7 +17,10 @@ vskip = args.vskip
 import tempfile, os, subprocess
 xml_file = tempfile.mkstemp(suffix=".xml")[1]
 os.remove(xml_file)
-subprocess.check_call(["pdftohtml", args.filename.name,"-xml", xml_file],stdout=open(os.devnull,'w'))
+cmd = ["pdftohtml", args.filename.name,"-xml", xml_file]
+if args.page >= 0:
+    cmd += ["-f",str(args.page),"-l",str(args.page)]
+subprocess.check_call(cmd,stdout=open(os.devnull,'w'))
 if not os.path.isfile(xml_file):
     raise Exception("There was an error when running the pdftohtml command")
 
@@ -42,10 +45,6 @@ while data:
             x = page_to_cells.textline_to_dict(x)
             if x['text']: # skip empty text zones
                 pages[-1].append(x)
-
-# Keep only one page if requested
-if args.page != -1:
-    pages = [pages[args.page]]
 
 # Actual work
 pages = [list(page_to_cells.get_cells(p,vskip=vskip,verbose_output=args.verbose))
