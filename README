@@ -7,24 +7,27 @@ It considers every single page of a pdf as a table, and attempts to make sense
 of it. The output should be much easier to parse and 'somehow clean', but a
 manual checking is required over the results.
 
-It currently exports the data as a .html (for visualization) as well as in
-Python pickle form, for reuse in another script.
+It currently exports the data as a .html (for visualization) as well as in .csv
+or in Python pickle form, for reuse in another script.
 
     ~/pdf_table_scraper$ ./pdf_table_scraper.py -h
     usage: pdf_table_scraper.py [-h] [--vskip VSKIP] [--page PAGE] [--html HTML]
-                                [--pickle PICKLE] [-v]
+                                [--csv CSV] [--pickle PICKLE] [--tmp_xml TMP_XML]
+                                [-v]
                                 filename
 
     Extracts a table from a .pdf file
 
     positional arguments:
-      filename         the .pdf file
+      filename           the .pdf file
 
     optional arguments:
-      -h, --help       show this help message and exit
-      --vskip VSKIP    max vertical space between consecutive lines in the same
-                       paragraph (usually ~8)
-      --page PAGE      run the script on a specific page
-      --html HTML      A filename for html output
-      --pickle PICKLE  A filename for Python .pickle output
-      -v               Increase the verbosity level
+      -h, --help         show this help message and exit
+      --vskip VSKIP      max vertical space between consecutive lines in the same
+                         paragraph (usually ~8)
+      --page PAGE        run the script on a specific page
+      --html HTML        A filename for html output
+      --csv CSV          A filename for csv output
+      --pickle PICKLE    A filename for Python .pickle output
+      --tmp_xml TMP_XML  A temporary XML file (output of pdftohtml)
+      -v                 Increase the verbosity level
