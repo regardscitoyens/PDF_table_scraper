@@ -166,8 +166,8 @@ def split_columns(row):
             merge_text_fields(C[-2-i],C[-1])
 
         if verbose and len(C)>1:
-            print "\n------ Unexpected merge: perhaps a bad value for vskip? ------"
-            print C[-1]['text']
+            print("\n------ Unexpected merge: perhaps a bad value for vskip? ------")
+            print(C[-1]['text'])
 
         merged_cells.append(C[-1])
 

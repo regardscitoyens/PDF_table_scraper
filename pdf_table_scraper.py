@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Parse input
 import argparse
@@ -7,6 +7,7 @@ parser.add_argument('filename', help="the .pdf file", type=argparse.FileType('r'
 parser.add_argument('--vskip', help="max vertical space between consecutive lines in the same paragraph (usually ~8)",type=int,default=8)
 parser.add_argument('--page', help="run the script on a specific page",type=int,default=-1)
 parser.add_argument('--html', help="A filename for html output",type=argparse.FileType('w'))
+parser.add_argument('--csv', help="A filename for csv output",type=argparse.FileType('w'))
 parser.add_argument('--pickle', help="A filename for Python .pickle output",type=argparse.FileType('w'))
 parser.add_argument('--tmp_xml', help="A temporary XML file (output of pdftohtml)",type=argparse.FileType('w'))
 parser.add_argument('-v', help="Increase the verbosity level", dest='verbose', action='store_true',default=False)
@@ -72,3 +73,8 @@ if args.html:
 if args.pickle:
     import pickle
     pickle.dump(pages,args.pickle)
+
+if args.csv:
+    import csv
+    csv.writer(args.csv,delimiter=';').writerows([[x['text'] for x in row]
+                                                  for page in pages for row in page])
