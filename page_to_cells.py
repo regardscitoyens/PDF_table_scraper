@@ -33,7 +33,9 @@ def textline_to_dict(l,strip_html=True):
     d['text'] = d['text'].lstrip(' ')
     return d
 
-def merge_text_fields(page):
+
+
+def guess_and_merge_paragraphs(page):
     r"""
     Merge text fields which apparently belong to the same paragraph.
 
@@ -160,11 +162,15 @@ def refine_table(table):
     return table
 
 def get_cells(page,vskip,verbose_output):
+    r"""
+    Tries to interpret 'page' as a table, and returns it as a list (rows) of
+    text fields (cells).
+    """
     global lineskip
     global verbose
     lineskip = vskip
     verbose = verbose_output
-    merge_text_fields(page)
+    guess_and_merge_paragraphs(page)
     rows = split_rows(page)
     table = [split_columns(row) for row in rows]
     table = refine_table(table)
