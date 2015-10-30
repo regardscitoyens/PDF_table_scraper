@@ -42,7 +42,7 @@ def merge_text_fields(A,B):
 
     A is left unchanged.
     """
-    B['text'] = A['text'] +' ' +B['text']
+    B['text'] = re.sub(" +"," ",(A['text'] +' ' +B['text']))
     B['height'] = max(bottom(A),bottom(B)) - min(top(A),top(B))
     B['width'] =  max(right(A),right(B)) - min(left(A),left(B))
     B['top'] = min(top(A),top(B))
