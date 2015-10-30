@@ -33,7 +33,54 @@ def textline_to_dict(l,strip_html=True):
     d['text'] = d['text'].lstrip(' ')
     return d
 
+def merge_text_fields(A,B):
+    r"""
+    This function merges A and B into B.
 
+    The new text of B becomes A['text']+B['text'], and all dimensions of B are
+    updated accordingly.
+
+    A is left unchanged.
+    """
+    B['text'] = A['text'] +' ' +B['text']
+    B['height'] = max(bottom(A),bottom(B)) - min(top(A),top(B))
+    B['width'] =  max(right(A),right(B)) - min(left(A),left(B))
+    B['top'] = min(top(A),top(B))
+    B['left'] = min(left(B),left(A))
+
+def guess_and_merge_split_lines(page):
+    r"""
+    This function tries to locate and merge split lines.
+
+    This can happen with text lines like "The 1|st| of January" where 'st' is
+    written as an exponent. The line is thus cut into three parts in the
+    original file.
+    """
+    # Bottom first
+    page_copy = sorted(page,key=right,reverse=True)
+
+    while page_copy:
+
+        # Can this element be merged with anything else?
+        rightmost_element = page_copy[0]
+
+        for beginning in page_copy: # potential beginning of the sentence
+
+            if right(beginning) > left(rightmost_element) + lineskip/2: # too close to be the previous sentence
+                continue
+            if right(beginning) < left(rightmost_element) - lineskip/2: # too far. End of search.
+                page_copy.remove(rightmost_element)
+                break
+
+            # If one is right above the other, we merge.
+            if (top(beginning)    > top(rightmost_element) - lineskip/2 and
+                bottom(beginning) < bottom(rightmost_element) + lineskip/2):
+                merge_text_fields(beginning,rightmost_element)
+                page.remove(beginning)
+                page_copy.remove(beginning)
+                break
+        else:
+            page_copy.remove(rightmost_element) # this element can't be merged with anything else
 
 def guess_and_merge_paragraphs(page):
     r"""
@@ -60,19 +107,13 @@ def guess_and_merge_paragraphs(page):
             # If one is right above the other, we merge.
             if ((left(upper)-lineskip < left(lowest_element) and right(lowest_element) < right(upper)+lineskip) or
                 (left(lowest_element)-lineskip < left(upper) and right(upper) < right(lowest_element)+lineskip)):
-                lowest_element['text'] = upper['text'] + lowest_element['text']
-                lowest_element['height'] = bottom(lowest_element)-top(upper)
-                lowest_element['width'] = max(width(lowest_element),width(upper))
-
-                # top and left must be defined *after* the others (they top() and left() use them!!)
-                lowest_element['top'] = top(upper)
-                lowest_element['left'] = min(left(lowest_element),left(upper))
+                merge_text_fields(upper,lowest_element)
                 page.remove(upper)
                 page_copy.remove(upper)
                 break
+
         else:
             page_copy.remove(lowest_element) # this element can't be merged with anything else
-
 
 def split_rows(page, vertical=True):
     r"""
@@ -170,6 +211,7 @@ def get_cells(page,vskip,verbose_output):
     global verbose
     lineskip = vskip
     verbose = verbose_output
+    guess_and_merge_split_lines(page)
     guess_and_merge_paragraphs(page)
     rows = split_rows(page)
     table = [split_columns(row) for row in rows]
