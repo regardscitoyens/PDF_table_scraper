@@ -8,6 +8,7 @@ parser.add_argument('--vskip', help="max vertical space between consecutive line
 parser.add_argument('--page', help="run the script on a specific page",type=int,default=-1)
 parser.add_argument('--html', help="A filename for html output",type=argparse.FileType('w'))
 parser.add_argument('--pickle', help="A filename for Python .pickle output",type=argparse.FileType('w'))
+parser.add_argument('--tmp_xml', help="A temporary XML file (output of pdftohtml)",type=argparse.FileType('w'))
 parser.add_argument('-v', help="Increase the verbosity level", dest='verbose', action='store_true',default=False)
 
 args = parser.parse_args()
@@ -15,7 +16,10 @@ vskip = args.vskip
 
 # Turn the .pdf into a .xml and read it
 import tempfile, os, subprocess
-xml_file = tempfile.mkstemp(suffix=".xml")[1]
+if args.tmp_xml:
+    xml_file = args.tmp_xml.name
+else:
+    xml_file = tempfile.mkstemp(suffix=".xml")[1]
 os.remove(xml_file)
 cmd = ["pdftohtml", args.filename.name,"-xml", xml_file]
 if args.page >= 0:
