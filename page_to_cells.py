@@ -65,16 +65,15 @@ def guess_and_merge_split_lines(page):
         rightmost_element = page_copy[0]
 
         for beginning in page_copy: # potential beginning of the sentence
-
             if right(beginning) > left(rightmost_element) + lineskip/2: # too close to be the previous sentence
                 continue
             if right(beginning) < left(rightmost_element) - lineskip/2: # too far. End of search.
                 page_copy.remove(rightmost_element)
                 break
 
-            # If one is right above the other, we merge.
-            if (top(beginning)    > top(rightmost_element) - lineskip/2 and
-                bottom(beginning) < bottom(rightmost_element) + lineskip/2):
+            # If one is at the other's left, we merge.
+            if (top(beginning)    > top(rightmost_element) - lineskip and
+                bottom(beginning) < bottom(rightmost_element) + lineskip):
                 merge_text_fields(beginning,rightmost_element)
                 page.remove(beginning)
                 page_copy.remove(beginning)
@@ -161,20 +160,16 @@ def split_columns(row):
     cells = split_rows(row,vertical=False)
     merged_cells = []
     for C in cells:
+
         C.sort(key=lambda x:(top(x),left(x)))
-        cell_top = min(x['top'] for x in C)
-        cell_left = min(x['left'] for x in C)
-        cell = {
-            'text'  :" ".join(x['text'] for x in C).replace('  ',' '),
-            'top'   : cell_top,
-            'left'  : cell_left,
-            'width' : max(x['left']+x['width']-cell_left for x in C),
-            'height': max(x['top']+x['height']-cell_top  for x in C),
-        }
+        for i in range(len(C)-1):
+            merge_text_fields(C[-2-i],C[-1])
+
         if verbose and len(C)>1:
             print "\n------ Unexpected merge: perhaps a bad value for vskip? ------"
-            print cell['text']
-        merged_cells.append(cell)
+            print C[-1]['text']
+
+        merged_cells.append(C[-1])
 
     return merged_cells
 
